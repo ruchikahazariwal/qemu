@@ -188,6 +188,7 @@ static bool balloon_stats_supported(const VirtIOBalloon *s)
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
     bool temp = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_STATS_VQ);
     printf("Checking vdev has balloon stats feature %d: ", temp);
+    warn_report("Checking vdev has balloon stats feature %d: ", temp);
     return temp;
 }
 
@@ -220,6 +221,7 @@ static void balloon_stats_poll_cb(void *opaque)
     if (s->stats_vq_elem == NULL || !balloon_stats_supported(s)) {
         /* re-schedule */
         printf("%s : called if balloon stats is not supported",__func__);
+        warn_report("%s : called if balloon stats is not supported",__func__);
         balloon_stats_change_timer(s, s->stats_poll_interval);
         return;
     }

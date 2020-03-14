@@ -3276,6 +3276,7 @@ void virtio_init(VirtIODevice *vdev, const char *name,
             virtio_vmstate_change, vdev);
     vdev->device_endian = virtio_default_endian();
     vdev->use_guest_notifier_mask = true;
+    printf("%s: virtio is initialized balloon stats", __func__);
 }
 
 hwaddr virtio_queue_get_desc_addr(VirtIODevice *vdev, int n)
