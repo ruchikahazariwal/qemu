@@ -184,7 +184,7 @@ static inline void reset_stats(VirtIOBalloon *dev)
     fflush(stderr);
     for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
         fprintf(stderr, "loop for balloon stats %d: ", i);
-        dev->stats[i++] = -1
+        dev->stats[i++] = -1;
     }
 }
 
