@@ -177,16 +177,6 @@ static const char *balloon_stat_names[] = {
  * stale values stick around in case the guest reports a subset of the supported
  * statistics.
  */
-static inline void reset_stats(VirtIOBalloon *dev)
-{
-    int i;
-    fprintf(stderr, "Reset balloon stats %s: ", __func__);
-    fflush(stderr);
-    for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
-        fprintf(stderr, "loop for balloon stats %d: ", i);
-        dev->stats[i++] = -1;
-    }
-}
 
 static bool balloon_stats_supported(const VirtIOBalloon *s)
 {
@@ -196,6 +186,23 @@ static bool balloon_stats_supported(const VirtIOBalloon *s)
     fflush(stderr);
     warn_report("Checking vdev has balloon stats feature %d: ", temp);
     return temp;
+}
+
+static inline void reset_stats(VirtIOBalloon *dev)
+{
+    int i;
+    fprintf(stderr, "Reset balloon stats %s: ", __func__);
+    fflush(stderr);
+    fprintf(stderr, "loop for balloon stats memfree: %" PRIu64 "\n", dev->stats[4]);
+    for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
+        fprintf(stderr, "loop for balloon stats %d: ", i);
+        fflush(stderr);
+        dev->stats[i++] = -1;
+    }
+
+    bool temp = balloon_stats_supported(dev);
+    fprintf(stderr, "Check balloon stats supported by %s: fxn returns %d:", __func__, temp);
+    fflush(stderr);
 }
 
 static bool balloon_stats_enabled(const VirtIOBalloon *s)
