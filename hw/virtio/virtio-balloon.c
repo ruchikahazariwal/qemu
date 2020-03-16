@@ -182,7 +182,10 @@ static inline void reset_stats(VirtIOBalloon *dev)
     int i;
     fprintf(stderr, "Reset balloon stats %s: ", __func__);
     fflush(stderr);
-    for (i = 0; i < VIRTIO_BALLOON_S_NR; dev->stats[i++] = -1);
+    for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
+        fprintf(stderr, "loop for balloon stats %d: ", i);
+        dev->stats[i++] = -1
+    }
 }
 
 static bool balloon_stats_supported(const VirtIOBalloon *s)
