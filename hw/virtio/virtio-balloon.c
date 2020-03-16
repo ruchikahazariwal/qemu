@@ -182,33 +182,18 @@ static bool balloon_stats_supported(const VirtIOBalloon *s)
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
     bool temp = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_STATS_VQ);
-    fprintf(stderr, "Checking vdev has balloon stats feature %d: ", temp);
+    fprintf(stderr, "Checking vdev has balloon stats feature %d: \n", temp);
     fflush(stderr);
-    warn_report("Checking vdev has balloon stats feature %d: ", temp);
+    warn_report("Checking vdev has balloon stats feature %d: \n", temp);
     return temp;
 }
 
-static inline void reset_stats(VirtIOBalloon *dev)
-{
-    int i;
-    fprintf(stderr, "Reset balloon stats %s: ", __func__);
-    fflush(stderr);
-    fprintf(stderr, "loop for balloon stats memfree: %" PRIu64 "\n", dev->stats[4]);
-    for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
-        fprintf(stderr, "loop for balloon stats %d: ", i);
-        fflush(stderr);
-        dev->stats[i++] = -1;
-    }
-
-    bool temp = balloon_stats_supported(dev);
-    fprintf(stderr, "Check balloon stats supported by %s: fxn returns %d:", __func__, temp);
-    fflush(stderr);
-}
 
 static bool balloon_stats_enabled(const VirtIOBalloon *s)
 {
     return s->stats_poll_interval > 0;
 }
+
 
 static void balloon_stats_destroy_timer(VirtIOBalloon *s)
 {
@@ -233,8 +218,7 @@ static void balloon_stats_poll_cb(void *opaque)
 
     if (s->stats_vq_elem == NULL || !balloon_stats_supported(s)) {
         /* re-schedule */
-        fprintf(stderr, "%s : called if balloon stats is not supported",__func__);
-        warn_report("%s : called if balloon stats is not supported",__func__);
+        fprintf(stderr, "%s : called if balloon stats is not supported \n",__func__);
         fflush(stderr);
         balloon_stats_change_timer(s, s->stats_poll_interval);
         return;
@@ -244,6 +228,29 @@ static void balloon_stats_poll_cb(void *opaque)
     virtio_notify(vdev, s->svq);
     g_free(s->stats_vq_elem);
     s->stats_vq_elem = NULL;
+}
+
+static inline void reset_stats(VirtIOBalloon *dev)
+{
+    int i;
+    fprintf(stderr, "Reset balloon stats %s: \n", __func__);
+    fflush(stderr);
+    //fprintf(stderr, "loop for balloon stats memfree: %" PRIu64 "\n", dev->stats[4]);
+    for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
+        fprintf(stderr, "loop for balloon stats %d: \n", i);
+        fflush(stderr);
+        dev->stats[i++] = -1;
+    }
+
+    bool enable = balloon_stats_enabled(dev);
+    fprintf(stderr, "Check balloon stats enables or not by %s: fxn returns %d:\n", __func__, enable);
+    fflush(stderr);
+
+    bool temp = balloon_stats_supported(dev);
+    fprintf(stderr, "Check balloon stats supported by %s: fxn returns %d:\n", __func__, temp);
+    fflush(stderr);
+
+    balloon_stats_poll_cb(dev);
 }
 
 static void balloon_stats_get_all(Object *obj, Visitor *v, const char *name,
