@@ -250,7 +250,7 @@ static inline void reset_stats(VirtIOBalloon *dev)
     fprintf(stderr, "Check balloon stats supported by %s: fxn returns %d:\n", __func__, temp);
     fflush(stderr);
 
-    balloon_stats_poll_cb(dev);
+    //balloon_stats_poll_cb(dev);
 }
 
 static void balloon_stats_get_all(Object *obj, Visitor *v, const char *name,
