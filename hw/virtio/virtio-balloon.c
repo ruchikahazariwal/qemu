@@ -180,6 +180,8 @@ static const char *balloon_stat_names[] = {
 static inline void reset_stats(VirtIOBalloon *dev)
 {
     int i;
+    fprintf(stderr, "Reset balloon stats %s: ", __func__);
+    fflush(stderr);
     for (i = 0; i < VIRTIO_BALLOON_S_NR; dev->stats[i++] = -1);
 }
 
@@ -188,6 +190,7 @@ static bool balloon_stats_supported(const VirtIOBalloon *s)
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
     bool temp = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_STATS_VQ);
     fprintf(stderr, "Checking vdev has balloon stats feature %d: ", temp);
+    fflush(stderr);
     warn_report("Checking vdev has balloon stats feature %d: ", temp);
     return temp;
 }
@@ -222,6 +225,7 @@ static void balloon_stats_poll_cb(void *opaque)
         /* re-schedule */
         fprintf(stderr, "%s : called if balloon stats is not supported",__func__);
         warn_report("%s : called if balloon stats is not supported",__func__);
+        fflush(stderr);
         balloon_stats_change_timer(s, s->stats_poll_interval);
         return;
     }
