@@ -181,9 +181,9 @@ static const char *balloon_stat_names[] = {
 static bool balloon_stats_supported(const VirtIOBalloon *s)
 {
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
-    bool temp = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_STATS_VQ);
-    fprintf(stderr, "Checking vdev has balloon stats feature %d: \n", temp);
+    fprintf(stderr, "Guest Features: %" PRIu64 "\n", vdev->guest_features);
     fflush(stderr);
+    bool temp = virtio_vdev_has_feature(vdev, VIRTIO_BALLOON_F_STATS_VQ);
     warn_report("Checking vdev has balloon stats feature %d: \n", temp);
     return temp;
 }
@@ -214,16 +214,22 @@ static void balloon_stats_poll_cb(void *opaque)
 {
     VirtIOBalloon *s = opaque;
     VirtIODevice *vdev = VIRTIO_DEVICE(s);
-    printf("%s : Notifying the guest to provide balloon stats ",__func__);
+    fprintf(stderr, "%s : Notifying the guest to provide balloon stats \n",__func__);
+    fflush(stderr);
+    fprintf(stderr, "%d : balloon stats callback fxn calling balloon_stats_supported \n",balloon_stats_supported(s));
+    fflush(stderr);
 
     if (s->stats_vq_elem == NULL || !balloon_stats_supported(s)) {
         /* re-schedule */
-        fprintf(stderr, "%s : called if balloon stats is not supported \n",__func__);
-        fflush(stderr);
+        //fprintf(stderr, "%s : called if balloon stats is not supported \n",__func__);
+        //fflush(stderr);
         balloon_stats_change_timer(s, s->stats_poll_interval);
         return;
     }
 
+
+    fprintf(stderr, "%s : inside this fxn \n",__func__);
+    fflush(stderr);
     virtqueue_push(s->svq, s->stats_vq_elem, s->stats_vq_offset);
     virtio_notify(vdev, s->svq);
     g_free(s->stats_vq_elem);
@@ -237,13 +243,13 @@ static inline void reset_stats(VirtIOBalloon *dev)
     fflush(stderr);
     //fprintf(stderr, "loop for balloon stats memfree: %" PRIu64 "\n", dev->stats[4]);
     for (i = 0; i < VIRTIO_BALLOON_S_NR; i++){
-        fprintf(stderr, "loop for balloon stats %d: \n", i);
-        fflush(stderr);
+        // fprintf(stderr, "loop for balloon stats %d: \n", i);
+        // fflush(stderr);
         dev->stats[i++] = -1;
     }
 
     bool enable = balloon_stats_enabled(dev);
-    fprintf(stderr, "Check balloon stats enables or not by %s: fxn returns %d:\n", __func__, enable);
+    fprintf(stderr, "Check balloon stats enabled or not by %s: fxn returns %d:\n", __func__, enable);
     fflush(stderr);
 
     bool temp = balloon_stats_supported(dev);
@@ -733,7 +739,8 @@ static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
     VirtIOBalloon *dev = VIRTIO_BALLOON(vdev);
     f |= dev->host_features;
     virtio_add_feature(&f, VIRTIO_BALLOON_F_STATS_VQ);
-
+    fprintf(stderr,"%s: is called and feature bits is: %" PRIu64 "\n",__func__,f);
+    fflush(stderr);
     return f;
 }
 
@@ -763,8 +770,11 @@ static void virtio_balloon_to_target(void *opaque, ram_addr_t target)
 static int virtio_balloon_post_load_device(void *opaque, int version_id)
 {
     VirtIOBalloon *s = VIRTIO_BALLOON(opaque);
-
+    fprintf(stderr,"%s: is called \n",__func__);
+    fflush(stderr);
     if (balloon_stats_enabled(s)) {
+        fprintf(stderr,"%s: is called and balloon stat is enabled \n",__func__);
+        fflush(stderr);
         balloon_stats_change_timer(s, s->stats_poll_interval);
     }
     return 0;
