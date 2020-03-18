@@ -865,7 +865,12 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
 
     if (virtio_has_feature(s->host_features,
                            VIRTIO_BALLOON_F_STATS_VQ)) {
-
+        fprintf(stderr, "Inside if %"PRIu32 ": the value of s->host_features \n",s->host_features);
+        fflush(stderr);
+    }
+    else{
+        fprintf(stderr, "Inside else %"PRIu32 ": the value of s->host_features \n",s->host_features);
+        fflush(stderr);
     }
     fprintf(stderr, "%s: ends \n",__func__);
     fflush(stderr);
