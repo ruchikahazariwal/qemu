@@ -759,6 +759,8 @@ void virtqueue_unpop(VirtQueue *vq, const VirtQueueElement *elem,
  */
 bool virtqueue_rewind(VirtQueue *vq, unsigned int num)
 {
+    fprintf(stderr, "%s: is called and vq->inuse is %d: \n", __func__, vq->inuse);
+    fflush(stderr);
     if (num > vq->inuse) {
         return false;
     }
@@ -3276,7 +3278,7 @@ void virtio_init(VirtIODevice *vdev, const char *name,
             virtio_vmstate_change, vdev);
     vdev->device_endian = virtio_default_endian();
     vdev->use_guest_notifier_mask = true;
-    fprintf(stderr,"%s: virtio is initialized balloon stats", __func__);
+    fprintf(stderr,"%s: virtio is initialized balloon stats \n", __func__);
     fflush(stderr);
 }
 

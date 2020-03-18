@@ -918,13 +918,16 @@ static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
     fprintf(stderr, "%s: is called and vdev->vm_running is: %d\n", __func__, vdev->vm_running);
     fprintf(stderr, "%s: is called and status is: %d\n", __func__, status);
     fprintf(stderr, "%s: is called and VIRTIO_CONFIG_S_DRIVER_OK is: %d\n", __func__, VIRTIO_CONFIG_S_DRIVER_OK);
-    fprintf(stderr, "%s: is called and virtqueue_rewind(s->svq, 1) is: %d\n", __func__, virtqueue_rewind(s->svq, 1));
+    bool temp = virtqueue_rewind(s->svq, 1);
+    fprintf(stderr, "%s: is called and virtqueue_rewind(s->svq, 1) is: %d\n", __func__, temp);
     fflush(stderr); 
 
     if (!s->stats_vq_elem && vdev->vm_running &&
-        (status & VIRTIO_CONFIG_S_DRIVER_OK) && virtqueue_rewind(s->svq, 1)) {
+        (status & VIRTIO_CONFIG_S_DRIVER_OK) && temp) {
         /* poll stats queue for the element we have discarded when the VM
          * was stopped */
+        fprintf(stderr, "Inside the if and virtqueue_rewind(s->svq, 1) is: %d\n", temp);
+        fflush(stderr);
         virtio_balloon_receive_stats(vdev, s->svq);
     }
 
