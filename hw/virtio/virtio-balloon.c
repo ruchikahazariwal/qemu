@@ -40,6 +40,15 @@ typedef struct PartiallyBalloonedPage {
     unsigned long *bitmap;
 } PartiallyBalloonedPage;
 
+#define virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq) receive_stats_special(__func__,VirtIODevice *vdev, VirtQueue *vq);
+
+static void receive_stats_special( char const * caller_name, VirtIODevice *vdev, VirtQueue *vq )
+{
+    fprintf( stderr, "a was called from %s \n", caller_name );
+    fflush(stderr);
+    virtio_balloon_receive_stats(vdev, vq);
+}
+
 static void virtio_balloon_pbp_free(PartiallyBalloonedPage *pbp)
 {
     if (!pbp->bitmap) {
