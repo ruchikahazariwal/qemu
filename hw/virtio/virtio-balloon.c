@@ -421,6 +421,8 @@ static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
     size_t offset = 0;
     qemu_timeval tv;
 
+    fprintf(stderr, "%s: is called\n",__func__);
+    fflush(stderr);
     elem = virtqueue_pop(vq, sizeof(VirtQueueElement));
     if (!elem) {
         goto out;
@@ -458,8 +460,12 @@ static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
     }
 
     s->stats_last_update = tv.tv_sec;
+    fprintf(stderr, "%s: is ends \n",__func__);
+    fflush(stderr);
 
 out:
+    fprintf(stderr, "%s: is calling out case \n",__func__);
+    fflush(stderr);
     if (balloon_stats_enabled(s)) {
         balloon_stats_change_timer(s, s->stats_poll_interval);
     }
@@ -814,6 +820,9 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
     VirtIOBalloon *s = VIRTIO_BALLOON(dev);
     int ret;
 
+    fprintf(stderr, "%s: is called \n",__func__);
+    fflush(stderr);
+
     virtio_init(vdev, "virtio-balloon", VIRTIO_ID_BALLOON,
                 virtio_balloon_config_size(s));
 
@@ -853,6 +862,8 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
             virtio_error(vdev, "iothread is missing");
         }
     }
+    fprintf(stderr, "%s: ends \n",__func__);
+    fflush(stderr);
     reset_stats(s);
 }
 
