@@ -40,14 +40,26 @@ typedef struct PartiallyBalloonedPage {
     unsigned long *bitmap;
 } PartiallyBalloonedPage;
 
-#define virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq) receive_stats_special(__func__,VirtIODevice *vdev, VirtQueue *vq);
+// #define virtio_balloon_receive_stats(vdev,vq) receive_stats_special(_VA_LIST_,__func__);
 
-static void receive_stats_special( char const * caller_name, VirtIODevice *vdev, VirtQueue *vq )
+// static void receive_stats_special( VirtIODevice *vdev, VirtQueue *vq, char const * caller_name )
+// {
+//     fprintf( stderr, "a was called from %s \n", caller_name );
+//     fflush(stderr);
+//     virtio_balloon_receive_stats(vdev, vq);
+// }
+
+static void show_stack(int depth)
 {
-    fprintf( stderr, "a was called from %s \n", caller_name );
+    unsigned long *fp;
+
+    asm("movl %%ebp,%0": "=m" (fp));
+    for(;depth; depth--) {
+        fprintf(stderr, "%08lu ", *(fp+1));
+        fp = (fp+1);
+    }
     fflush(stderr);
-    virtio_balloon_receive_stats(vdev, vq);
-}
+} 
 
 static void virtio_balloon_pbp_free(PartiallyBalloonedPage *pbp)
 {
@@ -429,6 +441,7 @@ static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
     VirtIOBalloonStat stat;
     size_t offset = 0;
     qemu_timeval tv;
+    show_stack(2);
 
     fprintf(stderr, "%s: is called\n",__func__);
     fflush(stderr);
