@@ -913,7 +913,11 @@ static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
 {
     VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
 
-    fprintf(stderr, "%s: is called \n", __func__);
+    //fprintf(stderr, "%s: is called \n", __func__);
+    fprintf(stderr, "%s: is called and !s->stats_vq_elem is: %d\n", __func__, !s->stats_vq_elem);
+    fprintf(stderr, "%s: is called and vdev->vm_running is: %d\n", __func__, vdev->vm_running);
+    fprintf(stderr, "%s: is called and status is: %d\n", __func__, status);
+    fprintf(stderr, "%s: is called and VIRTIO_CONFIG_S_DRIVER_OK is: %d\n", __func__, VIRTIO_CONFIG_S_DRIVER_OK);
     fflush(stderr); 
 
     if (!s->stats_vq_elem && vdev->vm_running &&
@@ -921,6 +925,10 @@ static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
         /* poll stats queue for the element we have discarded when the VM
          * was stopped */
         virtio_balloon_receive_stats(vdev, s->svq);
+    }
+    else{
+        fprintf(stderr, "%s: is called and virtqueue_rewind(s->svq, 1) is: %d\n", __func__, virtqueue_rewind(s->svq, 1));
+        fflush(stderr); 
     }
 
     if (virtio_balloon_free_page_support(s)) {
