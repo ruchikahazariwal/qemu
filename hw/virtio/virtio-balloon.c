@@ -49,17 +49,18 @@ typedef struct PartiallyBalloonedPage {
 //     virtio_balloon_receive_stats(vdev, vq);
 // }
 
-static void show_stack(int depth)
-{
-    unsigned long *fp;
+// static void show_stack(int depth)
+// {
+//     unsigned long *fp;
 
-    asm("movl %%ebp,%0": "=m" (fp));
-    for(;depth; depth--) {
-        fprintf(stderr, "%08lu ", *(fp+1));
-        fp = (fp+1);
-    }
-    fflush(stderr);
-} 
+//     asm("movl %%ebp,%0": "=m" (fp));
+//     for(;depth; depth--) {
+//         fprintf(stderr, "%08lu ", *(fp+1));
+//         fp = (fp+1);
+//     }
+//     fflush(stderr);
+// } 
+const char * caller;
 
 static void virtio_balloon_pbp_free(PartiallyBalloonedPage *pbp)
 {
@@ -434,6 +435,7 @@ static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
     }
 }
 
+
 static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
 {
     VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
@@ -441,9 +443,9 @@ static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
     VirtIOBalloonStat stat;
     size_t offset = 0;
     qemu_timeval tv;
-    show_stack(2);
+    //show_stack(2);
 
-    fprintf(stderr, "%s: is called\n",__func__);
+    fprintf(stderr, "%s: is called by %s: \n",__func__, caller);
     fflush(stderr);
     elem = virtqueue_pop(vq, sizeof(VirtQueueElement));
     if (!elem) {
@@ -955,6 +957,7 @@ static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
          * was stopped */
         fprintf(stderr, "Inside the if and virtqueue_rewind(s->svq, 1) is: %d\n", temp);
         fflush(stderr);
+        caller = __func__;
         virtio_balloon_receive_stats(vdev, s->svq);
     }
 
