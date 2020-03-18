@@ -862,6 +862,11 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
             virtio_error(vdev, "iothread is missing");
         }
     }
+
+    if (virtio_has_feature(s->host_features,
+                           VIRTIO_BALLOON_F_STATS_VQ)) {
+
+    }
     fprintf(stderr, "%s: ends \n",__func__);
     fflush(stderr);
     reset_stats(s);
@@ -907,6 +912,9 @@ static void virtio_balloon_device_reset(VirtIODevice *vdev)
 static void virtio_balloon_set_status(VirtIODevice *vdev, uint8_t status)
 {
     VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
+
+    fprintf(stderr, "%s: is called \n", __func__);
+    fflush(stderr); 
 
     if (!s->stats_vq_elem && vdev->vm_running &&
         (status & VIRTIO_CONFIG_S_DRIVER_OK) && virtqueue_rewind(s->svq, 1)) {
