@@ -197,7 +197,7 @@ static bool balloon_stats_supported(const VirtIOBalloon *s)
 static bool balloon_stats_enabled(const VirtIOBalloon *s)
 {
     if (s->stats_poll_interval > 0)
-    printf("-----%s: stats poll interval=%lld\n",
+    printf("-----%s: stats poll interval=%lu\n",
         __func__, (uint64_t)s->stats_poll_interval);
     return s->stats_poll_interval > 0;
 }
@@ -214,7 +214,7 @@ static void balloon_stats_destroy_timer(VirtIOBalloon *s)
 
 static void balloon_stats_change_timer(VirtIOBalloon *s, int64_t secs)
 {
-    printf("-----%s: changing timer to %lld seconds\n", __func__, secs);
+    printf("-----%s: changing timer to %ld seconds\n", __func__, secs);
     timer_mod(s->stats_timer, qemu_clock_get_ms(QEMU_CLOCK_VIRTUAL) + secs * 1000);
 }
 
@@ -434,7 +434,7 @@ static void virtio_balloon_receive_stats(VirtIODevice *vdev, VirtQueue *vq)
         if (tag < VIRTIO_BALLOON_S_NR)
             s->stats[tag] = val;
 
-    printf("-----%s: got tag 0x%x val 0x%llx from guest\n",
+    printf("-----%s: got tag 0x%x val 0x%lx from guest\n",
         __func__, tag, val);
     }
     s->stats_vq_offset = offset;
@@ -732,7 +732,7 @@ static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
     f |= dev->host_features;
     virtio_add_feature(&f, VIRTIO_BALLOON_F_STATS_VQ);
 
-    printf("-----%s: host features: 0x%llx\n", __func__, f);
+    printf("-----%s: host features: 0x%lx\n", __func__, f);
     return f;
 }
 
@@ -741,7 +741,7 @@ static void virtio_balloon_stat(void *opaque, BalloonInfo *info)
     VirtIOBalloon *dev = opaque;
     info->actual = get_current_ram_size() - ((uint64_t) dev->actual <<
                                              VIRTIO_BALLOON_PFN_SHIFT);
-    printf("-----%s: info=0x%llx actual=0x%llx\n", __func__,
+    printf("-----%s: info=0x%lx actual=0x%lx\n", __func__,
     (uint64_t)info, (uint64_t)info->actual);
 }
 
