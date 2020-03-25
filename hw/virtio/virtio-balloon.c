@@ -845,8 +845,8 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
         }
     }
     /* XXX */
-    s->stats_timer = timer_new_ms(QEMU_CLOCK_VIRTUAL, balloon_stats_poll_cb, s);
-    s->stats_poll_interval = 10;
+    // s->stats_timer = timer_new_ms(QEMU_CLOCK_VIRTUAL, balloon_stats_poll_cb, s);
+    // s->stats_poll_interval = 10;
     /* XXX */
     reset_stats(s);
 }
